@@ -1,6 +1,7 @@
 package org.example.databasehw.service;
 
 import lombok.AllArgsConstructor;
+import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
 import org.example.databasehw.repository.StudentRepository;
 import org.example.databasehw.repository.StudentRepository;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    private final StudentRepository studentRepository;
+    private StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -39,5 +40,10 @@ public class StudentService {
 
     public List<Student> findByAgeBetween(Integer from, Integer to) {
         return studentRepository.findAllByAgeBetween(from, to);
+    }
+
+    public Faculty getStudentFaculty(Long studentId) {
+        Student student = studentRepository.findById(studentId).orElse(null);
+        return student.getFaculty();
     }
 }

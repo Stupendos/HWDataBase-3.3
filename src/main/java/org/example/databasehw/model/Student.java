@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "student")
 
 public class Student {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,10 +17,23 @@ public class Student {
     public Student() {
     }
 
-    public Student(String name, Integer age, Long id) {
+    @ManyToOne
+            private Faculty faculty;
+
+            public Student(String name, Integer age, Long id, Faculty faculty) {
+
         this.name = name;
         this.age = age;
         this.id = id;
+        this.faculty = faculty;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 
     private String name;

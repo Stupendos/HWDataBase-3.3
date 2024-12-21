@@ -1,8 +1,11 @@
 package org.example.databasehw.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "faculty")
@@ -12,14 +15,20 @@ public class Faculty {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "faculty")
+    @JsonIgnore
+    private Set<Student> students;
+
     private String name;
+
     private String color;
-    public Faculty() {
+
+    public Set<Student> getStudents() {
+        return students;
     }
 
-    public Faculty(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     public String getColor() {

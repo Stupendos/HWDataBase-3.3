@@ -1,6 +1,7 @@
 package org.example.databasehw.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
 import org.example.databasehw.service.StudentService;
 import org.example.databasehw.service.StudentService;
@@ -46,5 +47,10 @@ public class StudentController {
     @GetMapping("/age/between")
     public List<Student> findByAgeBetween(@RequestParam Integer from, @RequestParam Integer to) {
         return studentService.findByAgeBetween(from, to);
+    }
+
+    @GetMapping("/{studentId}/faculty")
+    public Faculty getStudentFaculty(@PathVariable Long studentId) {
+        return studentService.getStudentFaculty(studentId);
     }
 }
