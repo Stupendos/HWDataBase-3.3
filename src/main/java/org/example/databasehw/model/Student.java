@@ -1,9 +1,6 @@
 package org.example.databasehw.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 
 @Entity
 @Table(name = "student")
@@ -14,13 +11,17 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
+    private Integer age;
+
+    @ManyToOne
+    private Faculty faculty;
+
     public Student() {
     }
 
-    @ManyToOne
-            private Faculty faculty;
-
-            public Student(String name, Integer age, Long id, Faculty faculty) {
+    public Student(String name, Integer age, Long id, Faculty faculty) {
 
         this.name = name;
         this.age = age;
@@ -35,10 +36,6 @@ public class Student {
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
     }
-
-    private String name;
-
-    private Integer age;
 
     public Long getId() {
         return id;
