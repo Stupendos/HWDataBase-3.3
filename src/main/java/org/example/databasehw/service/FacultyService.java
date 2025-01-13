@@ -6,9 +6,7 @@ import org.example.databasehw.model.Student;
 import org.example.databasehw.repository.FacultyRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class FacultyService {
@@ -32,13 +30,17 @@ public class FacultyService {
     }
 
     public void deleteById(Long id) {
+        facultyRepository.deleteById(id);
     }
 
     public Set<Faculty> findByColor(String color) {
-        return (Set<Faculty>) facultyRepository.findAllByColor(color);
+        List<Faculty> faculties = facultyRepository.findAllByColor(color);
+        return new HashSet<>(faculties);
     }
+
     public Set<Student> getFacultyStudents(Long facultyId) {
-        Faculty faculty = facultyRepository.findById(facultyId).orElse(null);
-        return faculty.getStudents();
+        return facultyRepository.findById(facultyId)
+                .map(Faculty::getStudents)
+                .orElse(Collections.emptySet());
     }
 }

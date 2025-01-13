@@ -1,5 +1,6 @@
 package org.example.databasehw.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
@@ -32,6 +33,7 @@ public class StudentService {
     }
 
     public void deleteById(Long id) {
+        studentRepository.deleteById(id);
     }
 
     public List<Student> findByAge(Integer age) {
@@ -43,7 +45,8 @@ public class StudentService {
     }
 
     public Faculty getStudentFaculty(Long studentId) {
-        Student student = studentRepository.findById(studentId).orElse(null);
-        return student.getFaculty();
+        return studentRepository.findById(studentId)
+                .map(Student::getFaculty)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
     }
 }
