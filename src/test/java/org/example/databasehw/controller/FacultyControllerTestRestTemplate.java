@@ -15,9 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
-import java.util.Set;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -77,7 +75,10 @@ class FacultyControllerTestRestTemplate {
 
     @Test
     void findAll() {
+        // Act: Выполнение тестируемого действия
         ResponseEntity<Faculty[]> response = restTemplate.getForEntity("http://localhost:" + port + "/faculty", Faculty[].class);
+
+        // Assert: Проверка результатов
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().length > 0);
@@ -85,7 +86,10 @@ class FacultyControllerTestRestTemplate {
 
     @Test
     void findById() {
+        // Act: Выполнение тестируемого действия
         ResponseEntity<Faculty> response = restTemplate.getForEntity("http://localhost:" + port + "/faculty/" + faculty.getId(), Faculty.class);
+
+        // Assert: Проверка результатов
         if (response.getStatusCode() == HttpStatus.OK) {
             assertNotNull(response.getBody());
             assertEquals(faculty.getName(), response.getBody().getName());
@@ -98,13 +102,16 @@ class FacultyControllerTestRestTemplate {
     @Test
     void delete() {
         restTemplate.delete("http://localhost:" + port + "/faculty/" + faculty.getId());
+
         ResponseEntity<Faculty> response = restTemplate.getForEntity("http://localhost:" + port + "/faculty/" + faculty.getId(), Faculty.class);
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void findByColor() {
         ResponseEntity<Faculty[]> response = restTemplate.getForEntity("http://localhost:" + port + "/faculty/color?color=" + faculty.getColor(), Faculty[].class);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(Arrays.stream(response.getBody()).anyMatch(f -> f.getColor().equals(faculty.getColor())));
@@ -112,11 +119,10 @@ class FacultyControllerTestRestTemplate {
 
     @Test
     void getFacultyStudents() {
-        facultyRepository.findById(this.faculty.getId())
-                .orElseThrow(() -> new IllegalStateException("Faculty not found in the database"));
-        System.out.println("Имя факультета " + faculty.getName());
-        System.out.println("Имя студента факультета " + student.getName());
+        facultyRepository.findById(this.faculty.getId());
+
         ResponseEntity<Student[]> response = restTemplate.getForEntity("http://localhost:" + port + "/faculty/" + faculty.getId() + "/students", Student[].class);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }

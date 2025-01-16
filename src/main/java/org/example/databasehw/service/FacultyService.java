@@ -1,9 +1,11 @@
 package org.example.databasehw.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
 import org.example.databasehw.repository.FacultyRepository;
+import org.example.databasehw.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,9 +14,11 @@ import java.util.*;
 public class FacultyService {
 
     private final FacultyRepository facultyRepository;
+    private final StudentRepository studentRepository;
 
-    public FacultyService(FacultyRepository facultyRepository) {
+    public FacultyService(FacultyRepository facultyRepository, StudentRepository studentRepository) {
         this.facultyRepository = facultyRepository;
+        this.studentRepository = studentRepository;
     }
 
     public Faculty save(Faculty faculty) {
@@ -38,7 +42,7 @@ public class FacultyService {
         return new HashSet<>(faculties);
     }
 
-    public Set<Student> getFacultyStudents(Long facultyId) {
+        public Set<Student> getFacultyStudents(Long facultyId) {
         return facultyRepository.findById(facultyId)
                 .map(Faculty::getStudents)
                 .orElse(Collections.emptySet());

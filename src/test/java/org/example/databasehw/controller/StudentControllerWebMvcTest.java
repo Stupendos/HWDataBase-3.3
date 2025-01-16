@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
@@ -84,11 +85,13 @@ class StudentControllerWebMvcTest {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/student")
-                        .content(userObject.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .post("/student")
+                .content(userObject.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(student.getId()))
                 .andExpect(jsonPath("$.name").value(student.getName()));
@@ -99,9 +102,11 @@ class StudentControllerWebMvcTest {
 
         when(studentRepository.findAll()).thenReturn(Arrays.asList(student, student1));
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student")
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .get("/student")
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(student.getId()))
                 .andExpect(jsonPath("$[0].name").value(student.getName()))
@@ -113,9 +118,11 @@ class StudentControllerWebMvcTest {
     void findById() throws Exception {
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student/" + student.getId())
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .get("/student/" + student.getId())
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(student.getId()))
                 .andExpect(jsonPath("$.name").value(student.getName()));
@@ -127,9 +134,11 @@ class StudentControllerWebMvcTest {
 
         doNothing().when(studentRepository).deleteById(studentId);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/student/" + studentId)
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/student/" + studentId)
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk());
     }
 
@@ -138,10 +147,12 @@ class StudentControllerWebMvcTest {
         int age = 16;
         when(studentRepository.findAllByAge(age)).thenReturn(Arrays.asList(student, student1));
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student/age/eq")
-                        .param("age", String.valueOf(age))
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .get("/student/age/eq")
+                .param("age", String.valueOf(age))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(student.getId()))
@@ -158,11 +169,13 @@ class StudentControllerWebMvcTest {
         int toAge = 19;
         when(studentRepository.findAllByAgeBetween(fromAge, toAge)).thenReturn(Arrays.asList(student, student1, student2));
 
-        mockMvc.perform(MockMvcRequestBuilders
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .get("/student/age/between")
                 .param("from", String.valueOf(fromAge))
                 .param("to", String.valueOf(toAge))
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].id").value(student.getId()))
@@ -185,9 +198,11 @@ class StudentControllerWebMvcTest {
         student.setFaculty(newFaculty);
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
 
-        mockMvc.perform(MockMvcRequestBuilders
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .get("/student/" + student.getId() + "/faculty")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(newFaculty.getId()))
                 .andExpect(jsonPath("$.name").value(newFaculty.getName()));

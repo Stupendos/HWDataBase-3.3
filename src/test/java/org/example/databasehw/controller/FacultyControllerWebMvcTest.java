@@ -3,24 +3,22 @@ package org.example.databasehw.controller;
 import net.minidev.json.JSONObject;
 import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
-import org.example.databasehw.repository.FacultyRepository;
 import org.example.databasehw.service.FacultyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.junit.jupiter.api.Assertions.*;
+
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,13 +32,7 @@ class FacultyControllerWebMvcTest {
     MockMvc mockMvc;
 
     @MockBean
-    private FacultyRepository facultyRepository;
-
-    @SpyBean
     private FacultyService facultyService;
-
-    @InjectMocks
-    private FacultyController facultyController;
 
     private Faculty facultyTest;
     private JSONObject facultyJson;
@@ -60,12 +52,14 @@ class FacultyControllerWebMvcTest {
 
     @Test
     void save() throws Exception {
-        when(facultyRepository.save(any(Faculty.class))).thenReturn(facultyTest);
+        when(facultyService.save(any(Faculty.class))).thenReturn(facultyTest);
 
-        mockMvc.perform(MockMvcRequestBuilders
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .post("/faculty")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Gryffindor\", \"color\":\"Red\"}"))
+                .content("{\"name\":\"Gryffindor\", \"color\":\"Red\"}"));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Gryffindor"))
                 .andExpect(jsonPath("$.color").value("Red"))
@@ -74,10 +68,12 @@ class FacultyControllerWebMvcTest {
 
     @Test
     void findAll() throws Exception {
-        when(facultyRepository.findAll()).thenReturn(Arrays.asList(facultyTest));
+        when(facultyService.findAll()).thenReturn(Arrays.asList(facultyTest));
 
-        mockMvc.perform(get("/faculty")
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(get("/faculty")
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(facultyTest.getId()))
                 .andExpect(jsonPath("$[0].name").value(facultyTest.getName()))
@@ -86,10 +82,12 @@ class FacultyControllerWebMvcTest {
 
     @Test
     void findById() throws Exception {
-        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(facultyTest));
+        when(facultyService.findById(any(Long.class))).thenReturn(Optional.of(facultyTest));
 
-        mockMvc.perform(get("/faculty/" + facultyTest.getId())
-                        .accept(MediaType.APPLICATION_JSON))
+        ResultActions resultActions = mockMvc.perform(get("/faculty/" + facultyTest.getId())
+                        .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(facultyTest.getId()))
                 .andExpect(jsonPath("$.name").value(facultyTest.getName()));
@@ -97,21 +95,25 @@ class FacultyControllerWebMvcTest {
 
     @Test
     void delete() throws Exception {
-        doNothing().when(facultyRepository).deleteById(facultyTest.getId());
+        doNothing().when(facultyService).deleteById(facultyTest.getId());
 
-        mockMvc.perform(MockMvcRequestBuilders
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                         .delete("/faculty/" + facultyTest.getId())
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk());
     }
 
     @Test
     void findByColor() throws Exception {
-        when(facultyRepository.findAllByColor(any(String.class))).thenReturn(Arrays.asList(facultyTest));
+        when(facultyService.findByColor(any(String.class))).thenReturn(Set.of(facultyTest));
 
-        mockMvc.perform(get("/faculty/color")
+        ResultActions resultActions = mockMvc.perform(get("/faculty/color")
                         .param("color", String.valueOf(facultyTest.getColor()))
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value(facultyTest.getId()))
@@ -133,7 +135,9 @@ class FacultyControllerWebMvcTest {
 
         when(facultyService.getFacultyStudents(22L)).thenReturn(students);
 
-        mockMvc.perform(get("/faculty/{facultyId}/students", 22L))
+        ResultActions resultActions = mockMvc.perform(get("/faculty/{facultyId}/students", 22L));
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(st1.getId()))
                 .andExpect(jsonPath("$[0].name").value(st1.getName()))
