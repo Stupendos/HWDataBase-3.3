@@ -5,14 +5,15 @@ import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
 import org.example.databasehw.repository.FacultyRepository;
 import org.example.databasehw.service.FacultyService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/faculty")
-//@AllArgsConstructor
 public class FacultyController {
 
     private FacultyService facultyService;
@@ -32,8 +33,16 @@ public class FacultyController {
     }
 
     @GetMapping("/{id}")
-    public Faculty findById(@PathVariable Long id) {
-        return facultyService.findById(id).orElse(null);
+//    public Faculty findById(@PathVariable Long id) {
+//        return facultyService.findById(id).orElse(null);
+//    }
+    public ResponseEntity<Faculty> findById(@PathVariable Long id) {
+        Optional<Faculty> faculty = facultyService.findById(id);
+        if (faculty.isPresent()) {
+            return ResponseEntity.ok(faculty.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

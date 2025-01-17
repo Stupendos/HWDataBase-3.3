@@ -16,16 +16,16 @@ public class Student {
     private Integer age;
 
     @ManyToOne
+    @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
     public Student() {
     }
 
-    public Student(String name, Integer age, Long id, Faculty faculty) {
+    public Student(String name, Integer age, Faculty faculty) {
 
         this.name = name;
         this.age = age;
-        this.id = id;
         this.faculty = faculty;
     }
 
@@ -59,6 +59,19 @@ public class Student {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return id != null && id.equals(student.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
 

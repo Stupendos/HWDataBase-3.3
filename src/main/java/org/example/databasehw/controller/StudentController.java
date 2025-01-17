@@ -1,10 +1,11 @@
 package org.example.databasehw.controller;
 
-import lombok.AllArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
 import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
 import org.example.databasehw.service.StudentService;
-import org.example.databasehw.service.StudentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,10 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public Student findById(@PathVariable Long id) {
-        return studentService.findById(id).orElse(null);
+    public ResponseEntity<Student> findById(@PathVariable Long id) {
+        return studentService.findById(id)
+                .map(student -> ResponseEntity.ok(student))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -49,8 +52,9 @@ public class StudentController {
         return studentService.findByAgeBetween(from, to);
     }
 
-    @GetMapping("/{studentId}/faculty")
-    public Faculty getStudentFaculty(@PathVariable Long studentId) {
-        return studentService.getStudentFaculty(studentId);
+    @GetMapping("/{id}/faculty")
+    public Faculty getStudentFaculty(@PathVariable Long id) {
+        return studentService.getStudentFaculty(id);
     }
 }
+
