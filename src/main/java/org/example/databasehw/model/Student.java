@@ -19,6 +19,10 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
+    private Avatar avatar;
+
+
     public Student() {
     }
 
