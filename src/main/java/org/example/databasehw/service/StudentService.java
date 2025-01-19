@@ -49,4 +49,16 @@ public class StudentService {
                 .map(Student::getFaculty)
                 .orElseThrow(() -> new EntityNotFoundException("Student not found"));
     }
+
+    public Integer getNumberOfStudents() {
+        return studentRepository.getNumberOfStudents();
+    }
+
+    public Double getAverageAgeOfStudents() {
+        return studentRepository.getAverageAgeOfStudents();
+    }
+
+    public List<Student> getFiveLastStudents() {
+        return studentRepository.getFiveLastStudents();
+    }
 }
