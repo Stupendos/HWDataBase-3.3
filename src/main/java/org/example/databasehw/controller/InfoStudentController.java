@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-@RequestMapping("/student")
+@RequestMapping("/info-student")
 @RestController
 public class InfoStudentController {
 
