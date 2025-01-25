@@ -34,6 +34,9 @@ class FacultyControllerTestRestTemplate {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private FacultyController facultyController;
+
     private Faculty faculty;
     private Student student;
 
@@ -81,6 +84,7 @@ class FacultyControllerTestRestTemplate {
         // Assert: Проверка результатов
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+        System.out.println(Arrays.toString(response.getBody()));
         assertTrue(response.getBody().length > 0);
     }
 

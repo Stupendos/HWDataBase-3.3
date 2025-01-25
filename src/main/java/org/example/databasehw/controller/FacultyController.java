@@ -33,9 +33,6 @@ public class FacultyController {
     }
 
     @GetMapping("/{id}")
-//    public Faculty findById(@PathVariable Long id) {
-//        return facultyService.findById(id).orElse(null);
-//    }
     public ResponseEntity<Faculty> findById(@PathVariable Long id) {
         Optional<Faculty> faculty = facultyService.findById(id);
         if (faculty.isPresent()) {
@@ -58,5 +55,10 @@ public class FacultyController {
     @GetMapping("/{facultyId}/students")
     public Set<Student> getFacultyStudents(@PathVariable Long facultyId) {
         return facultyService.getFacultyStudents(facultyId);
+    }
+
+    @GetMapping("/longest-name-faculty")
+    public String getLongestFacultyName() {
+        return facultyService.getLongestFacultyName();
     }
 }

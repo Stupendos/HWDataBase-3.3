@@ -50,7 +50,6 @@ class StudentControllerTestRestTemplate {
         testStudent.setAge(20);
         testStudent.setFaculty(testFaculty);
         testFaculty.getStudents().add(testStudent);
-
         studentRepository.save(testStudent);
     }
 
