@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.LongStream;
 
 @RestController
 @RequestMapping("/student")
@@ -69,8 +70,9 @@ public class StudentController {
     }
 
     public long calculateSum() {
-        long n = 1_000_000;
-        return (n * (n + 1)) / 2;
+        return LongStream.rangeClosed(1, 1_000_000)
+                .parallel()
+                .sum();
     }
 
     @GetMapping("/sum")
