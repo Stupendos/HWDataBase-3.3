@@ -8,10 +8,12 @@ import org.example.databasehw.repository.StudentRepository;
 import org.example.databasehw.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -75,5 +77,22 @@ public class StudentService {
     public List<Student> getFiveLastStudents() {
         logger.info("Getting five last students");
         return studentRepository.getFiveLastStudents();
+    }
+
+    public List<String> findByNameStartingWithA() {
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(name -> name.toUpperCase().startsWith("A"))
+                .map(String::toUpperCase)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public Double averageAge() {
+        return studentRepository.findAll()
+                .stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElse(0);
     }
 }

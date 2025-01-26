@@ -1,23 +1,25 @@
 package org.example.databasehw.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.example.databasehw.model.Faculty;
 import org.example.databasehw.model.Student;
+import org.example.databasehw.repository.StudentRepository;
 import org.example.databasehw.service.StudentService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.LongStream;
 
 @RestController
 @RequestMapping("/student")
 public class StudentController {
 
     private final StudentService studentService;
+    private final StudentRepository studentRepository;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, StudentRepository studentRepository) {
         this.studentService = studentService;
+        this.studentRepository = studentRepository;
     }
 
     @PostMapping
@@ -56,5 +58,28 @@ public class StudentController {
     public Faculty getStudentFaculty(@PathVariable Long id) {
         return studentService.getStudentFaculty(id);
     }
+
+    @GetMapping("name-starting-with-a")
+    public ResponseEntity<List<String>> findByNameStartingWithA() {
+        return ResponseEntity.ok(studentService.findByNameStartingWithA());
+    }
+
+    @GetMapping("average-age")
+    public ResponseEntity<Double> averageAge() {
+        return ResponseEntity.ok(studentService.averageAge());
+    }
+
+    public long calculateSum() {
+        return LongStream.rangeClosed(1, 1_000_000)
+                .parallel()
+                .sum();
+    }
+
+    @GetMapping("/sum")
+    public ResponseEntity<Long> getSum() {
+        long sum = calculateSum();
+        return ResponseEntity.ok(sum);
+    }
+
 }
 

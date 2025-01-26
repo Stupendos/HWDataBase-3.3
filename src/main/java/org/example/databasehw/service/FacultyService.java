@@ -57,4 +57,11 @@ public class FacultyService {
                 .map(Faculty::getStudents)
                 .orElse(Collections.emptySet());
     }
+
+    public String getLongestFacultyName() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElse("Факультетов нет");
+    }
 }
