@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,9 +39,19 @@ class StudentControllerTestRestTemplate {
 
     private Faculty testFaculty;
     private Student testStudent;
+    private Student testStudent1;
+    private Student testStudent2;
+    private Student testStudent3;
+    private Student testStudent4;
+    private Student testStudent5;
+
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
 
     @BeforeEach
     void setUp() {
+        System.setOut(new PrintStream(outContent));
+
         testFaculty = new Faculty();
         testFaculty.setName("Гриффиндор");
         testFaculty.setColor("Красный");
@@ -51,6 +63,19 @@ class StudentControllerTestRestTemplate {
         testStudent.setFaculty(testFaculty);
         testFaculty.getStudents().add(testStudent);
         studentRepository.save(testStudent);
+
+        testStudent1 = new Student("Captain", 20, testFaculty);
+        testStudent2 = new Student("Jack", 21, testFaculty);
+        testStudent3 = new Student("Sparrow", 22, testFaculty);
+        testStudent4 = new Student("David", 23, testFaculty);
+        testStudent5 = new Student("Johns", 24, testFaculty);
+
+        List.of(testStudent1, testStudent2, testStudent3, testStudent4, testStudent5)
+                .forEach(student -> {
+                    student.setFaculty(testFaculty);
+                    testFaculty.getStudents().add(student);
+                    studentRepository.save(student);
+                });
     }
 
     @Test
@@ -152,5 +177,43 @@ class StudentControllerTestRestTemplate {
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getId()).isEqualTo(testStudent.getFaculty().getId());
         assertThat(response.getBody().getName()).isEqualTo(testStudent.getFaculty().getName());
+    }
+
+
+    @Test
+    void printParallel() throws Exception {
+        String url = "http://localhost:" + port + "/student/print-parallel";
+        restTemplate.getForObject(url, Void.class);
+
+        Thread.sleep(1000);
+
+        String output = outContent.toString();
+        System.setOut(originalOut);
+
+        Assertions.assertThat(output).contains("John");
+        Assertions.assertThat(output).contains("Captain");
+        Assertions.assertThat(output).contains("Jack");
+        Assertions.assertThat(output).contains("Sparrow");
+        Assertions.assertThat(output).contains("David");
+        Assertions.assertThat(output).contains("Johns");
+
+    }
+
+    @Test
+    void printStudentNameSynchronized() throws Exception {
+        String url = "http://localhost:" + port + "/student/print-synchronized";
+        restTemplate.getForObject(url, Void.class);
+
+        Thread.sleep(1000);
+
+        String output = outContent.toString();
+        System.setOut(originalOut);
+
+        Assertions.assertThat(output).contains("John");
+        Assertions.assertThat(output).contains("Captain");
+        Assertions.assertThat(output).contains("Jack");
+        Assertions.assertThat(output).contains("Sparrow");
+        Assertions.assertThat(output).contains("David");
+        Assertions.assertThat(output).contains("Johns");
     }
 }
