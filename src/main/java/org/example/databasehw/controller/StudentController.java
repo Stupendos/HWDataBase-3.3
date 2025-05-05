@@ -81,5 +81,50 @@ public class StudentController {
         return ResponseEntity.ok(sum);
     }
 
+    @GetMapping("/print-parallel")
+    public void printParallel() {
+        List<Student> students = studentService.findAll();
+        for (int i = 0; i < 2 && i < students.size(); i++) {
+            System.out.println(students.get(i).getName());
+        }
+        if (students.size() > 3) {
+            new Thread(() -> {
+                System.out.println(students.get(2).getName());
+                System.out.println(students.get(3).getName());
+            }).start();
+        }
+
+        if (students.size() > 5) {
+            new Thread(() -> {
+                System.out.println(students.get(4).getName());
+                System.out.println(students.get(5).getName());
+            }).start();
+        }
+    }
+
+    private synchronized void printStudentName(String name) {
+        System.out.println(name);
+    }
+
+    @GetMapping("/print-synchronized")
+    public void printStudentNameSynchronized() {
+        List<Student> students = studentService.findAll();
+
+        for (int i = 0; i < 2 && i < students.size(); i++) {
+            printStudentName(students.get(i).getName());
+        }
+        if (students.size() > 3) {
+            new Thread(() -> {
+                System.out.println(students.get(2).getName());
+                System.out.println(students.get(3).getName());
+            }).start();
+        }
+        if (students.size() > 5) {
+            new Thread(() -> {
+                System.out.println(students.get(4).getName());
+                System.out.println(students.get(5).getName());
+            }).start();
+        }
+    }
 }
 
